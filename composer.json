@@ -1,0 +1,21 @@
+{
+  "name" : "connect/whiskers",
+  "description" : "Reinventing the wheel; one locally-produced, hamster-milk latte at a time.",
+  "license" : "MIT",
+  "authors" : [
+    {
+      "name" : "Christopher Pitt",
+      "email" : "chris@connectjoepublic.com"
+    }
+  ],
+  "require" : {
+    "mustache/mustache" : "2.*",
+    "michelf/php-markdown" : "1.*",
+    "league/flysystem" : "0.*"
+  },
+  "autoload" : {
+    "psr-4" : {
+      "Connect\\Whiskers\\" : "workbench/source"
+    }
+  }
+}
