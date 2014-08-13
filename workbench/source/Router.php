@@ -40,4 +40,26 @@ class Router
 
     return $default;
   }
+
+  /**
+   * @return string
+   */
+  public function getHost()
+  {
+    return $this->getProtocol() . "://" . $_SERVER["HTTP_HOST"];
+  }
+
+  /**
+   * @return string
+   */
+  protected function getProtocol()
+  {
+    $protocol = "http";
+
+    if (isset($_SERVER["HTTPS"]) and $_SERVER["HTTPS"] !== "off") {
+      $protocol = "https";
+    }
+
+    return $protocol;
+  }
 }

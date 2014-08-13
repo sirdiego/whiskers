@@ -49,7 +49,7 @@ class Page
         $engine->setApplication($this->app);
 
         return $engine->render(
-          $this->getTemplate(),
+          $this->template(),
           $this->app["context"]->toArray()
         );
       }
@@ -59,11 +59,11 @@ class Page
   /**
    * @return string
    */
-  public function getTemplate()
+  public function template()
   {
     if (!$this->template) {
       $delimiter = "---";
-      $contents  = $this->getContents();
+      $contents  = $this->content();
 
       if (!strstr($contents, $delimiter)) {
         $this->template = $contents;
@@ -79,7 +79,7 @@ class Page
   /**
    * @return string
    */
-  public function getContents()
+  public function content()
   {
     if (!$this->contents) {
       $this->contents = file_get_contents(
@@ -93,11 +93,11 @@ class Page
   /**
    * @return string
    */
-  public function getContext()
+  public function context()
   {
     if (!$this->context) {
       $delimiter = "---";
-      $contents  = $this->getContents();
+      $contents  = $this->content();
 
       if (!strstr($contents, $delimiter)) {
         $this->context = [];
@@ -113,17 +113,19 @@ class Page
   /**
    * @return string
    */
-  public function getURL()
+  public function url()
   {
-    return $this->app["context"]["url"] . "/" . $this->getFragment();
+    return rtrim(
+      $this->app["router"]->getHost() . "/" . $this->fragment(), "/"
+    );
   }
 
   /**
    * @return string
    */
-  public function getFragment()
+  public function fragment()
   {
-    $path = $this->getPath();
+    $path = $this->path();
     $name = $this->file->getBasename("." . $this->file->getExtension());
 
     if ($name !== "index") {
@@ -136,7 +138,7 @@ class Page
   /**
    * @return string
    */
-  public function getPath()
+  public function path()
   {
     $path = str_replace(
       $this->app["context"]["paths"]["pages"], "", $this->file->getPath()
@@ -147,5 +149,13 @@ class Page
     }
 
     return "/";
+  }
+
+  /**
+   * @return SplFileInfo
+   */
+  public function file()
+  {
+    return $this->file;
   }
 }

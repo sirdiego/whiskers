@@ -106,7 +106,7 @@ class Application extends Container
   protected function renderPage($path, array $pages)
   {
     foreach ($pages as $page) {
-      if ($path === $page->getFragment()) {
+      if ($path === $page->fragment()) {
         $this
           ->extendContextWithPageInstance($page)
           ->trigger("onPage")
@@ -141,7 +141,7 @@ class Application extends Container
    */
   protected function extendContextWithPageContext(Page $page)
   {
-    $this["context"]->extend((array) $page->getContext());
+    $this["context"]->extend((array) $page->context());
     return $this;
   }
 

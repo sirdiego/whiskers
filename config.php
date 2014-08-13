@@ -3,7 +3,6 @@
 $base = realpath(__DIR__);
 
 return [
-  "url"       => "http://127.0.0.1:8000",
   "paths"     => [
     "base"    => $base,
     "layouts" => $base . "/layouts",
@@ -22,7 +21,7 @@ return [
     "mustache" => new Connect\Whiskers\Renderer\MustacheRenderer(),
     "mustdown" => new Connect\Whiskers\Renderer\MustdownRenderer()
   ],
-  "plugins" => [
+  "plugins"   => [
     new Connect\Whiskers\Plugin\SamplePlugin()
   ]
 ];
