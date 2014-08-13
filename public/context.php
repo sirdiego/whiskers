@@ -1,6 +1,6 @@
 <?php
 
-$base = realpath(__DIR__);
+$base = realpath(__DIR__ . "/..");
 
 return [
   "paths"     => [
