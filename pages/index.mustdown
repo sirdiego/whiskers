@@ -4,7 +4,3 @@ meta:
 # Whiskers
 
 Reinventing the wheel; one locally-produced, hamster-milk latte at a time.
-
-{{# pages }}
-  <div>{{ title }}</div>
-{{/ pages }}

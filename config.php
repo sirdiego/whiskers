@@ -21,5 +21,8 @@ return [
     "markdown" => new Connect\Whiskers\Renderer\MarkdownRenderer(),
     "mustache" => new Connect\Whiskers\Renderer\MustacheRenderer(),
     "mustdown" => new Connect\Whiskers\Renderer\MustdownRenderer()
+  ],
+  "plugins" => [
+    new Connect\Whiskers\Plugin\SamplePlugin()
   ]
 ];

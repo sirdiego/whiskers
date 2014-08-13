@@ -4,19 +4,7 @@ namespace Connect\Whiskers;
 
 class Router
 {
-
-  /**
-   * @var Application
-   */
-  protected $app;
-
-  /**
-   * @param Application $app
-   */
-  public function __construct(Application $app)
-  {
-    $this->app = $app;
-  }
+  use ApplicationAware;
 
   /**
    * @return string

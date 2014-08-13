@@ -4,7 +4,7 @@ namespace Connect\Whiskers\Renderer;
 
 use Connect\Whiskers\Renderer;
 
-class MustdownRenderer implements Renderer
+class MustdownRenderer extends Renderer
 {
   public function __construct()
   {
@@ -14,14 +14,16 @@ class MustdownRenderer implements Renderer
 
   /**
    * @param string $template
-   * @param array  $data
    *
    * @return string
    */
-  public function render($template, array $data = [])
+  public function render($template)
   {
+    $this->mustache->setApplication($this->app);
+    $this->markdown->setApplication($this->app);
+
     return $this->markdown->render(
-      $this->mustache->render($template, $data), $data
+      $this->mustache->render($template)
     );
   }
 }

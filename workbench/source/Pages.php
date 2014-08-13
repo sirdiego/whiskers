@@ -9,24 +9,12 @@ use SplFileInfo;
 
 class Pages
 {
-
-  /**
-   * @var Application
-   */
-  protected $app;
+  use ApplicationAware;
 
   /**
    * @var array
    */
   protected $pages;
-
-  /**
-   * @param Application $app
-   */
-  public function __construct(Application $app)
-  {
-    $this->app = $app;
-  }
 
   /**
    * @return Page
@@ -35,11 +23,15 @@ class Pages
   {
     $context = $this->app["context"];
 
-    return new Page(
-      $this->app, new SplFileInfo(
+    $instance = new Page(
+      new SplFileInfo(
         $context["paths"]["layouts"] . "/" . $context["layouts"][$context["layout"]]
       )
     );
+
+    $instance->setApplication($this->app);
+
+    return $instance;
   }
 
   /**
@@ -55,7 +47,10 @@ class Pages
       );
 
       foreach ($files as $file) {
-        $pages[] = new Page($this->app, $file);
+        $instance = new Page($file);
+        $instance->setApplication($this->app);
+
+        $pages[] = $instance;
       }
 
       $this->pages = $pages;

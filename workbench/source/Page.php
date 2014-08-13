@@ -7,6 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Page
 {
+  use ApplicationAware;
 
   /**
    * @var string
@@ -24,22 +25,17 @@ class Page
   protected $template;
 
   /**
-   * @var Application
-   */
-  protected $app;
-
-  /**
    * @var SplFileInfo
    */
   protected $file;
 
   /**
-   * @param Application $app
    * @param SplFileInfo $file
+   *
+   * @return Page
    */
-  public function __construct(Application $app, SplFileInfo $file)
+  public function __construct(SplFileInfo $file)
   {
-    $this->app  = $app;
     $this->file = $file;
   }
 
@@ -50,6 +46,8 @@ class Page
   {
     foreach ($this->app["context"]["renderers"] as $extension => $engine) {
       if ($extension === $this->file->getExtension()) {
+        $engine->setApplication($this->app);
+
         return $engine->render(
           $this->getTemplate(),
           $this->app["context"]->toArray()
@@ -78,6 +76,9 @@ class Page
     return $this->template;
   }
 
+  /**
+   * @return string
+   */
   public function getContents()
   {
     if (!$this->contents) {

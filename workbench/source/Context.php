@@ -6,11 +6,7 @@ use ArrayAccess;
 
 class Context implements ArrayAccess
 {
-
-  /**
-   * @var Application
-   */
-  protected $app;
+  use ApplicationAware;
 
   /**
    * @var array
@@ -18,15 +14,9 @@ class Context implements ArrayAccess
   protected $context = [];
 
   /**
-   * @param Application $app
-   */
-  public function __construct(Application $app)
-  {
-    $this->app = $app;
-  }
-
-  /**
    * @param array $context
+   *
+   * @return void
    */
   public function extend(array $context)
   {
@@ -75,6 +65,8 @@ class Context implements ArrayAccess
   /**
    * @param mixed $offset
    * @param mixed $value
+   *
+   * @return void
    */
   public function offsetSet($offset, $value)
   {
@@ -83,6 +75,8 @@ class Context implements ArrayAccess
 
   /**
    * @param mixed $offset
+   *
+   * @return void
    */
   public function offsetUnset($offset)
   {
@@ -91,6 +85,8 @@ class Context implements ArrayAccess
 
   /**
    * @return array
+   *
+   * @return void
    */
   public function toArray()
   {

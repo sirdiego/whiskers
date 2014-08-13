@@ -2,13 +2,14 @@
 
 namespace Connect\Whiskers;
 
-interface Renderer
+abstract class Renderer
 {
+  use ApplicationAware;
+
   /**
    * @param string $template
-   * @param array  $data
    *
    * @return string
    */
-  public function render($template, array $data = []);
+  abstract public function render($template);
 }

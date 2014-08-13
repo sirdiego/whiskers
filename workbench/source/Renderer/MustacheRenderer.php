@@ -5,7 +5,7 @@ namespace Connect\Whiskers\Renderer;
 use Connect\Whiskers\Renderer;
 use Mustache_Engine;
 
-class MustacheRenderer implements Renderer
+class MustacheRenderer extends Renderer
 {
   public function __construct()
   {
@@ -14,12 +14,11 @@ class MustacheRenderer implements Renderer
 
   /**
    * @param string $template
-   * @param array  $data
    *
    * @return string
    */
-  public function render($template, array $data = [])
+  public function render($template)
   {
-    return $this->engine->render($template, $data);
+    return $this->engine->render($template, $this->app["context"]);
   }
 }
