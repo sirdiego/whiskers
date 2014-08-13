@@ -6,6 +6,6 @@ meta:
 Reinventing the wheel; one locally-produced, hamster-milk latte at a time.
 
 ## Pages
-{{#pages}}
-  - [{{context.meta.title}}]({{url}})
-{{/pages}}
+{{# pages }}
+  - [{{ context.meta.title }}]({{ url }})
+{{/ pages }}
