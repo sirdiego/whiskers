@@ -13,10 +13,11 @@ trait ApplicationAware
   /**
    * @param Application $app
    *
-   * @return void
+   * @return ApplicationAware
    */
   public function setApplication(Application $app)
   {
     $this->app = $app;
+    return $this;
   }
 }

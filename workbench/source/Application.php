@@ -13,63 +13,79 @@ class Application extends Container
    */
   public function __construct(array $context = [])
   {
-    $this->registerContext($context);
-    $this->registerPages();
-    $this->registerRouter();
+    $this
+      ->registerContext($context)
+      ->registerPages()
+      ->registerRouter()
+      ->trigger("onApplication");
+  }
 
-    $this->trigger("onApplication");
+  /**
+   * @param string $event
+   *
+   * @return Application
+   */
+  protected function trigger($event)
+  {
+    foreach ((array) $this["context"]["plugins"] as $plugin) {
+      if (method_exists($plugin, $event)) {
+        $plugin->$event();
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * @return Application
+   */
+  protected function registerRouter()
+  {
+    $this->bindShared("router", function () {
+      return (new Router())
+        ->setApplication($this);
+    });
+
+    return $this;
+  }
+
+  /**
+   * @return Application
+   */
+  protected function registerPages()
+  {
+    $this->bindShared("pages", function () {
+      return (new Pages())
+        ->setApplication($this);
+    });
+
+    return $this;
   }
 
   /**
    * @param array $context
    *
-   * @return void
+   * @return Application
    */
   protected function registerContext(array $context)
   {
     $this->bindShared("context", function () use ($context) {
-      $instance = new Context();
-      $instance->setApplication($this);
-      $instance->extend($context);
-
-      return $instance;
+      return (new Context())
+        ->extend($context)
+        ->setApplication($this);
     });
+
+    return $this;
   }
 
   /**
-   * @return void
-   */
-  protected function registerPages()
-  {
-    $this->bindShared("pages", function () {
-      $instance = new Pages();
-      $instance->setApplication($this);
-
-      return $instance;
-    });
-  }
-
-  /**
-   * @return void
-   */
-  protected function registerRouter()
-  {
-    $this->bindShared("router", function () {
-      $instance = new Router();
-      $instance->setApplication($this);
-
-      return $instance;
-    });
-  }
-
-  /**
-   * @return void
+   * @return Application
    */
   public function run()
   {
-    $this->trigger("onRun");
+    $this->trigger("onApplicationRun");
 
-    $this["context"]["path"]  = $path = $this["router"]->getPath();
+    $this["context"]["path"] = $path = $this["router"]->getPath();
     $this->trigger("onPath");
 
     $this["context"]["pages"] = $pages = $this["pages"]->getPages();
@@ -77,24 +93,78 @@ class Application extends Container
 
     foreach ($pages as $page) {
       if ($path === $page->getFragment()) {
-        $this->extendContextWithPageInstance($page);
-        $this->extendContextWithPageContext($page);
-        $this->extendContextWithPageContent($page);
-        break;
+        $this
+          ->extendContextWithPageInstance($page)
+          ->trigger("onPage")
+          ->extendContextWithPageContext($page)
+          ->trigger("onPageContext")
+          ->extendContextWithPageContent($page)
+          ->trigger("onPageContent");
       }
     }
 
-    $this->setHeaders();
-    $this->trigger("onHeaders");
+    $this
+      ->setHeaders()
+      ->trigger("onHeaders");
 
-    $this["context"]["content"] = $this["pages"]->getLayout()->render();
-    $this->trigger("onLayoutContent");
+    $layout = $this["pages"]->getLayout();
 
-    print $this["context"]["content"];
+    $this
+      ->extendContextWithLayoutInstance($layout)
+      ->trigger("onLayout")
+      ->extendContextWithLayoutContent($layout)
+      ->trigger("onLayoutContent");
+
+    print $this["context"]["layout"]["content"];
+
+    return $this;
   }
 
   /**
-   * @return void
+   * @param Page $page
+   *
+   * @return Application
+   */
+  protected function extendContextWithPageContent(Page $page)
+  {
+    $this["context"]->extend([
+      "page" => [
+        "content" => $page->render()
+      ]
+    ]);
+
+    return $this;
+  }
+
+  /**
+   * @param Page $page
+   *
+   * @return Application
+   */
+  protected function extendContextWithPageContext(Page $page)
+  {
+    $this["context"]->extend((array) $page->getContext());
+    return $this;
+  }
+
+  /**
+   * @param Page $page
+   *
+   * @return Application
+   */
+  protected function extendContextWithPageInstance(Page $page)
+  {
+    $this["context"]->extend([
+      "page" => [
+        "instance" => $page
+      ]
+    ]);
+
+    return $this;
+  }
+
+  /**
+   * @return Application
    */
   protected function setHeaders()
   {
@@ -103,6 +173,40 @@ class Application extends Container
     }
 
     header("Content-type: " . $this["context"]["content-type"]);
+
+    return $this;
+  }
+
+  /**
+   * @param Page $layout
+   *
+   * @return Application
+   */
+  protected function extendContextWithLayoutInstance(Page $layout)
+  {
+    $this["context"]->extend([
+      "layout" => [
+        "instance" => $layout
+      ]
+    ]);
+
+    return $this;
+  }
+
+  /**
+   * @param Page $layout
+   *
+   * @return Application
+   */
+  protected function extendContextWithLayoutContent(Page $layout)
+  {
+    $this["context"]->extend([
+      "layout" => [
+        "content" => $layout->render()
+      ]
+    ]);
+
+    return $this;
   }
 
   /**
@@ -114,62 +218,5 @@ class Application extends Container
   protected function render($template, array $data)
   {
     return $this->renderer->render($template, $data);
-  }
-
-  /**
-   * @param string $event
-   *
-   * @return void
-   */
-  protected function trigger($event)
-  {
-    foreach ((array) $this["context"]["plugins"] as $plugin) {
-      if (method_exists($plugin, $event)) {
-        $plugin->$event();
-      }
-    }
-  }
-
-  /**
-   * @param Page $page
-   *
-   * @return void
-   */
-  protected function extendContextWithPageInstance(Page $page)
-  {
-    $this["context"]->extend([
-      "page" => [
-        "instance" => $page
-      ]
-    ]);
-
-    $this->trigger("onPage");
-  }
-
-  /**
-   * @param Page $page
-   *
-   * @return void
-   */
-  protected function extendContextWithPageContext(Page $page)
-  {
-    $this["context"]->extend((array) $page->getContext());
-    $this->trigger("onPageContext");
-  }
-
-  /**
-   * @param Page $page
-   *
-   * @return void
-   */
-  protected function extendContextWithPageContent(Page $page)
-  {
-    $this["context"]->extend([
-      "page" => [
-        "content" => $page->render()
-      ]
-    ]);
-
-    $this->trigger("onPageContent");
   }
 }

@@ -17,9 +17,9 @@ class SamplePlugin extends Plugin
   /**
    * @return void
    */
-  public function onRun()
+  public function onApplicationRun()
   {
-    echo "SamplePlugin: onRun<br />";
+    echo "SamplePlugin: onApplicationRun<br />";
   }
 
   /**
@@ -68,6 +68,14 @@ class SamplePlugin extends Plugin
   public function onHeaders()
   {
     echo "SamplePlugin: onHeaders<br />";
+  }
+
+  /**
+   * @return void
+   */
+  public function onLayout()
+  {
+    echo "SamplePlugin: onLayout<br />";
   }
 
   /**

@@ -16,11 +16,12 @@ class Context implements ArrayAccess
   /**
    * @param array $context
    *
-   * @return void
+   * @return Context
    */
   public function extend(array $context)
   {
     $this->context = $this->merge($this->context, $context);
+    return $this;
   }
 
   /**
@@ -33,6 +34,10 @@ class Context implements ArrayAccess
   {
     foreach ($extension as $key => $value) {
       if (array_key_exists($key, $base) and is_array($value)) {
+        if (!is_array($base[$key])) {
+          $base[$key] = [];
+        }
+
         $base[$key] = $this->merge($base[$key], $extension[$key]);
       } else {
         $base[$key] = $value;
