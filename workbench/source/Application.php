@@ -91,6 +91,20 @@ class Application extends Container
     $this["context"]["pages"] = $pages = $this["pages"]->getPages();
     $this->trigger("onPages");
 
+    $this->renderPage($path, $pages);
+    $this->renderLayout();
+
+    print $this["context"]["layout"]["content"];
+
+    return $this;
+  }
+
+  /**
+   * @param string $path
+   * @param array  $pages
+   */
+  protected function renderPage($path, array $pages)
+  {
     foreach ($pages as $page) {
       if ($path === $page->getFragment()) {
         $this
@@ -102,22 +116,6 @@ class Application extends Container
           ->trigger("onPageContent");
       }
     }
-
-    $this
-      ->setHeaders()
-      ->trigger("onHeaders");
-
-    $layout = $this["pages"]->getLayout();
-
-    $this
-      ->extendContextWithLayoutInstance($layout)
-      ->trigger("onLayout")
-      ->extendContextWithLayoutContent($layout)
-      ->trigger("onLayoutContent");
-
-    print $this["context"]["layout"]["content"];
-
-    return $this;
   }
 
   /**
@@ -163,6 +161,21 @@ class Application extends Container
     return $this;
   }
 
+  protected function renderLayout()
+  {
+    $this
+      ->setHeaders()
+      ->trigger("onHeaders");
+
+    $layout = $this["pages"]->getLayout();
+
+    $this
+      ->extendContextWithLayoutInstance($layout)
+      ->trigger("onLayout")
+      ->extendContextWithLayoutContent($layout)
+      ->trigger("onLayoutContent");
+  }
+
   /**
    * @return Application
    */
@@ -182,11 +195,11 @@ class Application extends Container
    *
    * @return Application
    */
-  protected function extendContextWithLayoutInstance(Page $layout)
+  protected function extendContextWithLayoutContent(Page $layout)
   {
     $this["context"]->extend([
       "layout" => [
-        "instance" => $layout
+        "content" => $layout->render()
       ]
     ]);
 
@@ -198,11 +211,11 @@ class Application extends Container
    *
    * @return Application
    */
-  protected function extendContextWithLayoutContent(Page $layout)
+  protected function extendContextWithLayoutInstance(Page $layout)
   {
     $this["context"]->extend([
       "layout" => [
-        "content" => $layout->render()
+        "instance" => $layout
       ]
     ]);
 
