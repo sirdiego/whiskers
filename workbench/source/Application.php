@@ -50,13 +50,10 @@ class Application extends Container
 
     foreach ($pages as $page) {
       if ($path === $page->getFragment()) {
-        $this["context"]->extend($page->getContext());
+        $this["context"]->extend((array) $page->getContext());
         $this["context"]["content"] = $page->render();
       }
     }
-
-//    print_r($this["context"]["content"]);
-//    exit();
 
     $this->setHeaders();
 
@@ -65,7 +62,11 @@ class Application extends Container
 
   protected function setHeaders()
   {
+    if (!isset($this["context"]["content-type"])) {
+      $this["context"]["content-type"] = "text/html";
+    }
 
+    header("Content-type: " . $this["context"]["content-type"]);
   }
 
   /**
