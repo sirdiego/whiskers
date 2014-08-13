@@ -17,7 +17,6 @@ Whiskers is a CMS, inspired by [Pico CMS](https://github.com/picocms/Pico).
 ## Todo
 
 - Tests
-- Plugins
 
 ## Licence
 

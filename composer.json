@@ -1,22 +1,26 @@
 {
-  "name" : "connect/whiskers",
-  "description" : "Reinventing the wheel; one locally-produced, hamster-milk latte at a time.",
-  "license" : "MIT",
-  "authors" : [
-    {
-      "name" : "Christopher Pitt",
-      "email" : "chris@connectjoepublic.com"
+    "name": "connect/whiskers",
+    "description": "Reinventing the wheel; one locally-produced, hamster-milk latte at a time.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christopher Pitt",
+            "email": "chris@connectjoepublic.com"
+        }
+    ],
+    "require": {
+        "mustache/mustache": "2.*",
+        "michelf/php-markdown": "1.*",
+        "symfony/yaml": "2.*",
+        "illuminate/container": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Connect\\Whiskers\\": "workbench/source"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "mockery/mockery": "0.*"
     }
-  ],
-  "require" : {
-    "mustache/mustache" : "2.*",
-    "michelf/php-markdown" : "1.*",
-    "symfony/yaml": "2.*",
-    "illuminate/container": "4.*"
-  },
-  "autoload" : {
-    "psr-4" : {
-      "Connect\\Whiskers\\" : "workbench/source"
-    }
-  }
 }
